@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kiko - Contagem e Aposentadoria</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <style>
+      textarea:focus,
+      input:focus,
+      select:focus {
+        box-shadow: 0 0 0 0;
+        border: 0 none;
+        outline: 0;
+      }
+
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+      }
+    </style>
+  </head>
+  <body class="bg-light container-fluid">
+    <!-- Logo -->
+    <header class="d-flex justify-content-end container-fluid">
+      <h2 class="mt-4 mb-4">Kiko - Contagem e Aposentadoria</h2>
+    </header>
+    <!-- Header -->
+    <div class="d-flex container-fluid justify-content-between mt-2">
+      <div>
+        <button
+          class="fs-5 btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#newCustomer"
+        >
+          Novo Cliente
+        </button>
+        <button
+          class="fs-5 btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#meeting"
+          onclick="loadMeetings()"
+        >
+          Agenda
+        </button>
+      </div>
+      <div class="d-flex align-items-center border">
+        <input
+          class="fs-5 border-0 ps-3"
+          placeholder="CPF"
+          type="number"
+          id="sCpf"
+        />
+        <div
+          class="fs-5 border-0 bg-transparent pe-3"
+          onclick="searchCustomers()"
+          data-bs-toggle="modal"
+          data-bs-target="#customerFound"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="26"
+            height="26"
+            fill="currentColor"
+            class="bi bi-person-fill"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+    <!-- Lista de clientes -->
+    <div class="container-fluid mt-4 table-responsive d-flex">
+      <table
+        class="table table-striped table-hover table-bordered table-hover align-middle"
+      >
+        <thead class="thead-dark">
+          <th>Cliente</th>
+          <th>Advogado</th>
+          <th>Fase</th>
+          <th>Descrição</th>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <!-- Modal Clientes -->
+    <div class="modal fade" tabindex="-1" id="newCustomer">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content p-1">
+          <div class="modal-header">
+            <button
+              onclick="addCustomer()"
+              class="btn btn btn-primary fw-medium fs-5"
+            >
+              Adicionar Cliente
+            </button>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body d-flex justify-content-center flex-column">
+            <input
+              type="text"
+              class="pe-5 fs-5 p-2 mb-3"
+              placeholder="Nome Completo"
+              id="nome"
+              required
+            />
+            <input
+              type="text"
+              class="pe-5 fs-5 p-2 mb-3"
+              placeholder="CPF"
+              id="cpf"
+              required
+            />
+            <input
+              type="text"
+              class="pe-5 fs-5 p-2 mb-3"
+              placeholder="Advogado(a)"
+              id="adv"
+            />
+            <input
+              type="text"
+              class="pe-5 fs-5 p-2 mb-3"
+              placeholder="Fase"
+              id="fase"
+            />
+            <input
+              type="text"
+              class="pe-5 fs-5 p-2 mb-3"
+              placeholder="Descrição"
+              id="desc"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Clientes encontrados -->
+    <div class="modal fade" tabindex="-1" id="customerFound">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content p-1">
+          <div class="modal-header">
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body d-flex justify-content-center flex-column">
+            <table
+              class="table table-striped table-hover table-bordered table-hover align-middle"
+            >
+              <thead class="thead-dark">
+                <th>Cliente</th>
+                <th>Advogado</th>
+                <th>Fase</th>
+                <th>Descrição</th>
+              </thead>
+              <tbody id="tableBodyFound"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Agenda -->
+    <div class="modal fade" tabindex="-1" id="meeting">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content p-1">
+          <div class="modal-header">
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body d-flex justify-content-around gap-2">
+            <div id="meetings" class="w-100">
+              <table
+                class="table table-striped table-hover table-bordered table-hover align-middle"
+              >
+                <thead class="thead-dark">
+                  <th>Cliente</th>
+                  <th>Hora</th>
+                  <th>Data</th>
+                </thead>
+                <tbody id="tablemeeting"></tbody>
+              </table>
+            </div>
+            <div
+              id="newMeeting"
+              class="w-100 d-flex flex-column gap-2 fs-5 fw-medium"
+            >
+              <input
+                type="text"
+                placeholder="Nome Cliente"
+                required
+                id="mName"
+              />
+              <input type="text" placeholder="Hora" required id="hora" />
+              <input type="text" placeholder="Data" required id="data" />
+              <button
+                class="btn btn-primary fs-5 fw-medium mt-2"
+                onclick="addmeeting()"
+              >
+                Adicionar Reunião
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="../index.js"></script>
+  </body>
+</html>
